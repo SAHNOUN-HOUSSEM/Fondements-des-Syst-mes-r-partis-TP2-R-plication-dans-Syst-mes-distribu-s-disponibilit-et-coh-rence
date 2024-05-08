@@ -2,11 +2,10 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class ClientReader {
+public class ClientReaderV2 {
     private final static String EXCHANGE_NAME_READER_TO_REPLICA = "reader_to_replica_exchange";
     private final static String EXCHANGE_NAME_REPLICA_TO_READER = "replica_to_reader_exchange";
 
@@ -18,8 +17,8 @@ public class ClientReader {
         factory.setHost("localhost");
 
         try (
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel()
+                Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel()
         ) {
             channel.exchangeDeclare(EXCHANGE_NAME_READER_TO_REPLICA, "fanout");
 
@@ -51,7 +50,7 @@ public class ClientReader {
             }
         }
     }
-
+    
     public static void readLast(Channel channel, String queueName) throws Exception{
         channel.queueBind(queueName, EXCHANGE_NAME_REPLICA_TO_READER, "");
         channel.basicConsume(queueName, true, (consumerTag, delivery) -> {
